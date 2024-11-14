@@ -5,10 +5,9 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: "dist",
-  },
-  server: {
-    watch: {
-      usePolling: true,
+    rollupOptions: {
+      input: "./index.html",
     },
   },
+  base: "./", // Esta línea asegura que las rutas generadas sean relativas
 });
