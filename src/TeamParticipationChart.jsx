@@ -23,8 +23,7 @@ const TeamParticipationChart = ({ teamId }) => {
     return d.toISOString().slice(0, 19);
   };
 
-  useEffect(() => {
-    // Obtener los datos del equipo desde el backend
+  const fetchData = () => {
     axios
       .get(`http://localhost:9091/api/analizer/team/${teamId}/participation`, {
         params: {
@@ -35,8 +34,8 @@ const TeamParticipationChart = ({ teamId }) => {
       .then((response) => {
         console.log(response.data);
         const teamResponseData = {
-          owner: response.data.repos[0].owner,
-          repositoryName: response.data.repos[0].repositoryName,
+          owner: response.data.repos[0]?.owner || "",
+          repositoryName: response.data.repos[0]?.repositoryName || "",
         };
         //Transformar los datos para que sean compatibles con el gráfico
         const transformedData = response.data.authors.map((author) => ({
@@ -52,10 +51,26 @@ const TeamParticipationChart = ({ teamId }) => {
       .catch((error) => {
         console.error("Error fetching team participation data: ", error);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, [teamId, startDate, endDate]);
 
+  const handleSelectionChange = (e) => {
+    console.log(e.target.value);
+    if (e.target.value == "primer") {
+      setStartDate("2024-10-21T00:00:00");
+      setEndDate("2024-10-31T23:59:59");
+    } else if (e.target.value == "segundo") {
+      setStartDate("2024-11-01T00:00:00");
+      setEndDate("2024-11-14T23:59:59");
+    }
+    fetchData();
+  };
+
   return (
-    <div>
+    <div className="chart-container">
       <div className="date-inputs">
         <div className="left">
           <div className="titles">Team: {teamId}</div>
@@ -63,6 +78,10 @@ const TeamParticipationChart = ({ teamId }) => {
           <div className="titles">Repository: {teamData.repositoryName}</div>
         </div>
         <div>
+          <select onChange={handleSelectionChange}>
+            <option value="primer">1st Sprint</option>
+            <option value="segundo">2nd Sprint</option>
+          </select>
           <label>
             Start Date:
             <input
