@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import "./teamParticipation.css";
 
+// eslint-disable-next-line react/prop-types
 const TeamParticipationChart = ({ teamId }) => {
   const [data, setData] = useState([]);
   const [teamData, setTeamData] = useState({});
@@ -55,6 +56,7 @@ const TeamParticipationChart = ({ teamId }) => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamId, startDate, endDate]);
 
   const handleSelectionChange = (e) => {
@@ -65,6 +67,12 @@ const TeamParticipationChart = ({ teamId }) => {
     } else if (e.target.value == "segundo") {
       setStartDate("2024-11-01T00:00:00");
       setEndDate("2024-11-14T23:59:59");
+    } else if (e.target.value == "tercer") {
+      setStartDate("2024-11-15T00:00:00");
+      setEndDate("2024-11-28T23:59:59");
+    } else if (e.target.value == "cuarto") {
+      setStartDate("2024-11-29T00:00:00");
+      setEndDate("2024-12-12T23:59:59");
     }
     fetchData();
   };
@@ -81,6 +89,8 @@ const TeamParticipationChart = ({ teamId }) => {
           <select onChange={handleSelectionChange}>
             <option value="primer">1st Sprint</option>
             <option value="segundo">2nd Sprint</option>
+            <option value="tercer">3rd Sprint</option>
+            <option value="cuarto">4th Sprint</option>
           </select>
           <label>
             Start Date:
