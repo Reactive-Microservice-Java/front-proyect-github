@@ -62,7 +62,7 @@ const TeamParticipationChart = ({ teamId, comision }) => {
       primer: ["2024-10-21T00:00:00", "2024-10-31T23:59:59"],
       segundo: ["2024-11-01T00:00:00", "2024-11-14T23:59:59"],
       tercer: ["2024-11-15T00:00:00", "2024-11-28T23:59:59"],
-      cuarto: ["2024-11-29T00:00:00", "2024-12-12T23:59:59"],
+      cuarto: ["2024-11-29T00:00:00", "2024-12-16T23:59:59"],
     };
     const [start, end] = dateRanges[e.target.value] || [];
     if (start && end) {
@@ -77,29 +77,30 @@ const TeamParticipationChart = ({ teamId, comision }) => {
       <div className="date-inputs">
         <div className="left">
           <div className="titles">Team: {teamId}</div>
-          <div className="titles">
-            Repositories:
-            {teamData.length > 0 ? (
-              <ul>
-                {teamData.map((repo) => (
-                  <div key={repo.id}>
-                    <strong>Owner:</strong> {repo.owner},
-                    <strong>Repository:</strong> {repo.repositoryName}
-                  </div>
-                ))}
-              </ul>
-            ) : (
-              "No repositories available"
-            )}
-          </div>
+          <div className="titles">Repositories:</div>
+          {teamData.length > 0 ? (
+            <ul className="repositories-list">
+              {teamData.map((repo) => (
+                <li key={repo.id}>
+                  <strong>Owner:</strong> {repo.owner} <br />
+                  <strong>Repository:</strong> {repo.repositoryName}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No repositories available</p>
+          )}
         </div>
+
         <div>
+          <label>Select Sprint:</label>
           <select onChange={handleSelectionChange}>
             <option value="primer">1st Sprint</option>
             <option value="segundo">2nd Sprint</option>
             <option value="tercer">3rd Sprint</option>
             <option value="cuarto">4th Sprint</option>
           </select>
+
           <label>
             Start Date:
             <input
@@ -108,6 +109,7 @@ const TeamParticipationChart = ({ teamId, comision }) => {
               onChange={(e) => setStartDate(e.target.value)}
             />
           </label>
+
           <label>
             End Date:
             <input
@@ -118,6 +120,15 @@ const TeamParticipationChart = ({ teamId, comision }) => {
           </label>
         </div>
       </div>
+
+      {/* Leyenda del gráfico */}
+      <div className="bar-chart-legend">
+        <span className="bar-additions">Additions</span>
+        <span className="bar-deletions">Deletions</span>
+        <span className="bar-total">Total Changes</span>
+      </div>
+
+      {/* Gráfico */}
       <ResponsiveContainer width="100%" height={600}>
         {data && data[0]?.name != null ? (
           <BarChart
@@ -134,7 +145,7 @@ const TeamParticipationChart = ({ teamId, comision }) => {
             <Bar dataKey="total" fill="#00c658" />
           </BarChart>
         ) : (
-          "No existe el grupo seleccionado "
+          <p>No data available for the selected period</p>
         )}
       </ResponsiveContainer>
     </div>
