@@ -34,16 +34,14 @@ const TeamParticipationChart = ({ teamId }) => {
       })
       .then((response) => {
         console.log(response.data);
-        const teamResponseData = {
-          owner: response.data.repos[0]?.owner || "",
-          repositoryName: response.data.repos[0]?.repositoryName || "",
-        };
+        const teamResponseData = response.data.repos || [];
+
         //Transformar los datos para que sean compatibles con el gráfico
         const transformedData = response.data.authors.map((author) => ({
-          name: author.name,
-          additions: author.contributions.totalAdditions,
-          deletions: author.contributions.totalDeletions,
-          total: author.contributions.totalChanges,
+          name: author.name || "",
+          additions: author.contributions.totalAdditions || "",
+          deletions: author.contributions.totalDeletions || "",
+          total: author.contributions.totalChanges || "",
         }));
 
         setTeamData(teamResponseData);
@@ -82,8 +80,21 @@ const TeamParticipationChart = ({ teamId }) => {
       <div className="date-inputs">
         <div className="left">
           <div className="titles">Team: {teamId}</div>
-          <div className="titles">Owner: {teamData.owner}</div>
-          <div className="titles">Repository: {teamData.repositoryName}</div>
+          <div className="titles">
+            Repositories:
+            {teamData.length > 0 ? (
+              <ul>
+                {teamData.map((repo) => (
+                  <div key={repo.id}>
+                    <strong>Owner:</strong> {repo.owner},
+                    <strong>Repository:</strong> {repo.repositoryName}
+                  </div>
+                ))}
+              </ul>
+            ) : (
+              "No repositories available"
+            )}
+          </div>
         </div>
         <div>
           <select onChange={handleSelectionChange}>
@@ -111,19 +122,23 @@ const TeamParticipationChart = ({ teamId }) => {
         </div>
       </div>
       <ResponsiveContainer width="100%" height={600}>
-        <BarChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="additions" fill="#8884d8" />
-          <Bar dataKey="deletions" fill="#82ca9d" />
-          <Bar dataKey="total" fill="#00c658" />
-        </BarChart>
+        {data && data[0]?.name != null ? (
+          <BarChart
+            data={data}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="additions" fill="#8884d8" />
+            <Bar dataKey="deletions" fill="#82ca9d" />
+            <Bar dataKey="total" fill="#00c658" />
+          </BarChart>
+        ) : (
+          "No existe el grupo seleccionado "
+        )}
       </ResponsiveContainer>
     </div>
   );
