@@ -13,7 +13,7 @@ import axios from "axios";
 import "./teamParticipation.css";
 
 // eslint-disable-next-line react/prop-types
-const TeamParticipationChart = ({ teamId }) => {
+const TeamParticipationChart = ({ teamId, comision }) => {
   const [data, setData] = useState([]);
   const [teamData, setTeamData] = useState({});
   const [startDate, setStartDate] = useState("2024-10-01T00:00:00");
@@ -55,24 +55,21 @@ const TeamParticipationChart = ({ teamId }) => {
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teamId, startDate, endDate]);
+  }, [teamId, comision, startDate, endDate]);
 
   const handleSelectionChange = (e) => {
-    console.log(e.target.value);
-    if (e.target.value == "primer") {
-      setStartDate("2024-10-21T00:00:00");
-      setEndDate("2024-10-31T23:59:59");
-    } else if (e.target.value == "segundo") {
-      setStartDate("2024-11-01T00:00:00");
-      setEndDate("2024-11-14T23:59:59");
-    } else if (e.target.value == "tercer") {
-      setStartDate("2024-11-15T00:00:00");
-      setEndDate("2024-11-28T23:59:59");
-    } else if (e.target.value == "cuarto") {
-      setStartDate("2024-11-29T00:00:00");
-      setEndDate("2024-12-12T23:59:59");
+    const dateRanges = {
+      primer: ["2024-10-21T00:00:00", "2024-10-31T23:59:59"],
+      segundo: ["2024-11-01T00:00:00", "2024-11-14T23:59:59"],
+      tercer: ["2024-11-15T00:00:00", "2024-11-28T23:59:59"],
+      cuarto: ["2024-11-29T00:00:00", "2024-12-12T23:59:59"],
+    };
+    const [start, end] = dateRanges[e.target.value] || [];
+    if (start && end) {
+      setStartDate(start);
+      setEndDate(end);
+      fetchData();
     }
-    fetchData();
   };
 
   return (
